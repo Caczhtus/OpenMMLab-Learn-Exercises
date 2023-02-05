@@ -1,0 +1,1119 @@
+2023-02-05 23:22:34,578 - mmcls - INFO - Environment info:
+------------------------------------------------------------
+sys.platform: linux
+Python: 3.8.16 (default, Jan 17 2023, 23:13:24) [GCC 11.2.0]
+CUDA available: True
+GPU 0: NVIDIA GeForce RTX 3090
+CUDA_HOME: /data/apps/cuda/11.1
+NVCC: Cuda compilation tools, release 11.1, V11.1.74
+GCC: gcc (GCC) 7.3.0
+PyTorch: 1.10.0+cu111
+PyTorch compiling details: PyTorch built with:
+  - GCC 7.3
+  - C++ Version: 201402
+  - Intel(R) Math Kernel Library Version 2020.0.0 Product Build 20191122 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.2.3 (Git Hash 7336ca9f055cf1bfa13efb658fe15dc9b41f0740)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.1
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86
+  - CuDNN 8.0.5
+  - Magma 2.5.2
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.1, CUDNN_VERSION=8.0.5, CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/c++, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -fopenmp -DNDEBUG -DUSE_KINETO -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -DEDGE_PROFILER_USE_KINETO -O2 -fPIC -Wno-narrowing -Wall -Wextra -Werror=return-type -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-unused-local-typedefs -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=1.10.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, 
+
+TorchVision: 0.11.0+cu111
+OpenCV: 4.7.0
+MMCV: 1.7.0
+MMCV Compiler: GCC 7.3
+MMCV CUDA Compiler: 11.1
+MMClassification: 0.25.0+3d4f80d
+------------------------------------------------------------
+
+2023-02-05 23:22:34,579 - mmcls - INFO - Distributed training: False
+2023-02-05 23:22:36,327 - mmcls - INFO - Config:
+model = dict(
+    type='ImageClassifier',
+    backbone=dict(
+        type='ResNet',
+        depth=18,
+        num_stages=4,
+        out_indices=(3, ),
+        style='pytorch'),
+    neck=dict(type='GlobalAveragePooling'),
+    head=dict(
+        type='LinearClsHead',
+        num_classes=5,
+        in_channels=512,
+        loss=dict(type='CrossEntropyLoss', loss_weight=1.0),
+        topk=(1, )))
+policy_imagenet = [[{
+    'type': 'Posterize',
+    'bits': 4,
+    'prob': 0.4
+}, {
+    'type': 'Rotate',
+    'angle': 30.0,
+    'prob': 0.6
+}],
+                   [{
+                       'type': 'Solarize',
+                       'thr': 113.77777777777777,
+                       'prob': 0.6
+                   }, {
+                       'type': 'AutoContrast',
+                       'prob': 0.6
+                   }],
+                   [{
+                       'type': 'Equalize',
+                       'prob': 0.8
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 0.6
+                   }],
+                   [{
+                       'type': 'Posterize',
+                       'bits': 5,
+                       'prob': 0.6
+                   }, {
+                       'type': 'Posterize',
+                       'bits': 5,
+                       'prob': 0.6
+                   }],
+                   [{
+                       'type': 'Equalize',
+                       'prob': 0.4
+                   }, {
+                       'type': 'Solarize',
+                       'thr': 142.22222222222223,
+                       'prob': 0.2
+                   }],
+                   [{
+                       'type': 'Equalize',
+                       'prob': 0.4
+                   }, {
+                       'type': 'Rotate',
+                       'angle': 26.666666666666668,
+                       'prob': 0.8
+                   }],
+                   [{
+                       'type': 'Solarize',
+                       'thr': 170.66666666666666,
+                       'prob': 0.6
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 0.6
+                   }],
+                   [{
+                       'type': 'Posterize',
+                       'bits': 6,
+                       'prob': 0.8
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 1.0
+                   }],
+                   [{
+                       'type': 'Rotate',
+                       'angle': 10.0,
+                       'prob': 0.2
+                   }, {
+                       'type': 'Solarize',
+                       'thr': 28.444444444444443,
+                       'prob': 0.6
+                   }],
+                   [{
+                       'type': 'Equalize',
+                       'prob': 0.6
+                   }, {
+                       'type': 'Posterize',
+                       'bits': 5,
+                       'prob': 0.4
+                   }],
+                   [{
+                       'type': 'Rotate',
+                       'angle': 26.666666666666668,
+                       'prob': 0.8
+                   }, {
+                       'type': 'ColorTransform',
+                       'magnitude': 0.0,
+                       'prob': 0.4
+                   }],
+                   [{
+                       'type': 'Rotate',
+                       'angle': 30.0,
+                       'prob': 0.4
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 0.6
+                   }],
+                   [{
+                       'type': 'Equalize',
+                       'prob': 0.0
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 0.8
+                   }],
+                   [{
+                       'type': 'Invert',
+                       'prob': 0.6
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 1.0
+                   }],
+                   [{
+                       'type': 'ColorTransform',
+                       'magnitude': 0.4,
+                       'prob': 0.6
+                   }, {
+                       'type': 'Contrast',
+                       'magnitude': 0.8,
+                       'prob': 1.0
+                   }],
+                   [{
+                       'type': 'Rotate',
+                       'angle': 26.666666666666668,
+                       'prob': 0.8
+                   }, {
+                       'type': 'ColorTransform',
+                       'magnitude': 0.2,
+                       'prob': 1.0
+                   }],
+                   [{
+                       'type': 'ColorTransform',
+                       'magnitude': 0.8,
+                       'prob': 0.8
+                   }, {
+                       'type': 'Solarize',
+                       'thr': 56.888888888888886,
+                       'prob': 0.8
+                   }],
+                   [{
+                       'type': 'Sharpness',
+                       'magnitude': 0.7,
+                       'prob': 0.4
+                   }, {
+                       'type': 'Invert',
+                       'prob': 0.6
+                   }],
+                   [{
+                       'type': 'Shear',
+                       'magnitude': 0.16666666666666666,
+                       'prob': 0.6,
+                       'direction': 'horizontal'
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 1.0
+                   }],
+                   [{
+                       'type': 'ColorTransform',
+                       'magnitude': 0.0,
+                       'prob': 0.4
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 0.6
+                   }],
+                   [{
+                       'type': 'Equalize',
+                       'prob': 0.4
+                   }, {
+                       'type': 'Solarize',
+                       'thr': 142.22222222222223,
+                       'prob': 0.2
+                   }],
+                   [{
+                       'type': 'Solarize',
+                       'thr': 113.77777777777777,
+                       'prob': 0.6
+                   }, {
+                       'type': 'AutoContrast',
+                       'prob': 0.6
+                   }],
+                   [{
+                       'type': 'Invert',
+                       'prob': 0.6
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 1.0
+                   }],
+                   [{
+                       'type': 'ColorTransform',
+                       'magnitude': 0.4,
+                       'prob': 0.6
+                   }, {
+                       'type': 'Contrast',
+                       'magnitude': 0.8,
+                       'prob': 1.0
+                   }],
+                   [{
+                       'type': 'Equalize',
+                       'prob': 0.8
+                   }, {
+                       'type': 'Equalize',
+                       'prob': 0.6
+                   }]]
+dataset_type = 'ImageNet'
+img_norm_cfg = dict(
+    mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='RandomResizedCrop', size=224),
+    dict(type='RandomFlip', flip_prob=0.5, direction='horizontal'),
+    dict(
+        type='AutoAugment',
+        policies=[[{
+            'type': 'Posterize',
+            'bits': 4,
+            'prob': 0.4
+        }, {
+            'type': 'Rotate',
+            'angle': 30.0,
+            'prob': 0.6
+        }],
+                  [{
+                      'type': 'Solarize',
+                      'thr': 113.77777777777777,
+                      'prob': 0.6
+                  }, {
+                      'type': 'AutoContrast',
+                      'prob': 0.6
+                  }],
+                  [{
+                      'type': 'Equalize',
+                      'prob': 0.8
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 0.6
+                  }],
+                  [{
+                      'type': 'Posterize',
+                      'bits': 5,
+                      'prob': 0.6
+                  }, {
+                      'type': 'Posterize',
+                      'bits': 5,
+                      'prob': 0.6
+                  }],
+                  [{
+                      'type': 'Equalize',
+                      'prob': 0.4
+                  }, {
+                      'type': 'Solarize',
+                      'thr': 142.22222222222223,
+                      'prob': 0.2
+                  }],
+                  [{
+                      'type': 'Equalize',
+                      'prob': 0.4
+                  }, {
+                      'type': 'Rotate',
+                      'angle': 26.666666666666668,
+                      'prob': 0.8
+                  }],
+                  [{
+                      'type': 'Solarize',
+                      'thr': 170.66666666666666,
+                      'prob': 0.6
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 0.6
+                  }],
+                  [{
+                      'type': 'Posterize',
+                      'bits': 6,
+                      'prob': 0.8
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 1.0
+                  }],
+                  [{
+                      'type': 'Rotate',
+                      'angle': 10.0,
+                      'prob': 0.2
+                  }, {
+                      'type': 'Solarize',
+                      'thr': 28.444444444444443,
+                      'prob': 0.6
+                  }],
+                  [{
+                      'type': 'Equalize',
+                      'prob': 0.6
+                  }, {
+                      'type': 'Posterize',
+                      'bits': 5,
+                      'prob': 0.4
+                  }],
+                  [{
+                      'type': 'Rotate',
+                      'angle': 26.666666666666668,
+                      'prob': 0.8
+                  }, {
+                      'type': 'ColorTransform',
+                      'magnitude': 0.0,
+                      'prob': 0.4
+                  }],
+                  [{
+                      'type': 'Rotate',
+                      'angle': 30.0,
+                      'prob': 0.4
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 0.6
+                  }],
+                  [{
+                      'type': 'Equalize',
+                      'prob': 0.0
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 0.8
+                  }],
+                  [{
+                      'type': 'Invert',
+                      'prob': 0.6
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 1.0
+                  }],
+                  [{
+                      'type': 'ColorTransform',
+                      'magnitude': 0.4,
+                      'prob': 0.6
+                  }, {
+                      'type': 'Contrast',
+                      'magnitude': 0.8,
+                      'prob': 1.0
+                  }],
+                  [{
+                      'type': 'Rotate',
+                      'angle': 26.666666666666668,
+                      'prob': 0.8
+                  }, {
+                      'type': 'ColorTransform',
+                      'magnitude': 0.2,
+                      'prob': 1.0
+                  }],
+                  [{
+                      'type': 'ColorTransform',
+                      'magnitude': 0.8,
+                      'prob': 0.8
+                  }, {
+                      'type': 'Solarize',
+                      'thr': 56.888888888888886,
+                      'prob': 0.8
+                  }],
+                  [{
+                      'type': 'Sharpness',
+                      'magnitude': 0.7,
+                      'prob': 0.4
+                  }, {
+                      'type': 'Invert',
+                      'prob': 0.6
+                  }],
+                  [{
+                      'type': 'Shear',
+                      'magnitude': 0.16666666666666666,
+                      'prob': 0.6,
+                      'direction': 'horizontal'
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 1.0
+                  }],
+                  [{
+                      'type': 'ColorTransform',
+                      'magnitude': 0.0,
+                      'prob': 0.4
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 0.6
+                  }],
+                  [{
+                      'type': 'Equalize',
+                      'prob': 0.4
+                  }, {
+                      'type': 'Solarize',
+                      'thr': 142.22222222222223,
+                      'prob': 0.2
+                  }],
+                  [{
+                      'type': 'Solarize',
+                      'thr': 113.77777777777777,
+                      'prob': 0.6
+                  }, {
+                      'type': 'AutoContrast',
+                      'prob': 0.6
+                  }],
+                  [{
+                      'type': 'Invert',
+                      'prob': 0.6
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 1.0
+                  }],
+                  [{
+                      'type': 'ColorTransform',
+                      'magnitude': 0.4,
+                      'prob': 0.6
+                  }, {
+                      'type': 'Contrast',
+                      'magnitude': 0.8,
+                      'prob': 1.0
+                  }],
+                  [{
+                      'type': 'Equalize',
+                      'prob': 0.8
+                  }, {
+                      'type': 'Equalize',
+                      'prob': 0.6
+                  }]]),
+    dict(
+        type='Normalize',
+        mean=[123.675, 116.28, 103.53],
+        std=[58.395, 57.12, 57.375],
+        to_rgb=True),
+    dict(type='ImageToTensor', keys=['img']),
+    dict(type='ToTensor', keys=['gt_label']),
+    dict(type='Collect', keys=['img', 'gt_label'])
+]
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='Resize', size=(256, -1)),
+    dict(type='CenterCrop', crop_size=224),
+    dict(
+        type='Normalize',
+        mean=[123.675, 116.28, 103.53],
+        std=[58.395, 57.12, 57.375],
+        to_rgb=True),
+    dict(type='ImageToTensor', keys=['img']),
+    dict(type='Collect', keys=['img'])
+]
+data = dict(
+    samples_per_gpu=256,
+    workers_per_gpu=4,
+    train=dict(
+        type='ImageNet',
+        data_prefix='data/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='RandomResizedCrop', size=224),
+            dict(type='RandomFlip', flip_prob=0.5, direction='horizontal'),
+            dict(
+                type='AutoAugment',
+                policies=[[{
+                    'type': 'Posterize',
+                    'bits': 4,
+                    'prob': 0.4
+                }, {
+                    'type': 'Rotate',
+                    'angle': 30.0,
+                    'prob': 0.6
+                }],
+                          [{
+                              'type': 'Solarize',
+                              'thr': 113.77777777777777,
+                              'prob': 0.6
+                          }, {
+                              'type': 'AutoContrast',
+                              'prob': 0.6
+                          }],
+                          [{
+                              'type': 'Equalize',
+                              'prob': 0.8
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 0.6
+                          }],
+                          [{
+                              'type': 'Posterize',
+                              'bits': 5,
+                              'prob': 0.6
+                          }, {
+                              'type': 'Posterize',
+                              'bits': 5,
+                              'prob': 0.6
+                          }],
+                          [{
+                              'type': 'Equalize',
+                              'prob': 0.4
+                          }, {
+                              'type': 'Solarize',
+                              'thr': 142.22222222222223,
+                              'prob': 0.2
+                          }],
+                          [{
+                              'type': 'Equalize',
+                              'prob': 0.4
+                          }, {
+                              'type': 'Rotate',
+                              'angle': 26.666666666666668,
+                              'prob': 0.8
+                          }],
+                          [{
+                              'type': 'Solarize',
+                              'thr': 170.66666666666666,
+                              'prob': 0.6
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 0.6
+                          }],
+                          [{
+                              'type': 'Posterize',
+                              'bits': 6,
+                              'prob': 0.8
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 1.0
+                          }],
+                          [{
+                              'type': 'Rotate',
+                              'angle': 10.0,
+                              'prob': 0.2
+                          }, {
+                              'type': 'Solarize',
+                              'thr': 28.444444444444443,
+                              'prob': 0.6
+                          }],
+                          [{
+                              'type': 'Equalize',
+                              'prob': 0.6
+                          }, {
+                              'type': 'Posterize',
+                              'bits': 5,
+                              'prob': 0.4
+                          }],
+                          [{
+                              'type': 'Rotate',
+                              'angle': 26.666666666666668,
+                              'prob': 0.8
+                          }, {
+                              'type': 'ColorTransform',
+                              'magnitude': 0.0,
+                              'prob': 0.4
+                          }],
+                          [{
+                              'type': 'Rotate',
+                              'angle': 30.0,
+                              'prob': 0.4
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 0.6
+                          }],
+                          [{
+                              'type': 'Equalize',
+                              'prob': 0.0
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 0.8
+                          }],
+                          [{
+                              'type': 'Invert',
+                              'prob': 0.6
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 1.0
+                          }],
+                          [{
+                              'type': 'ColorTransform',
+                              'magnitude': 0.4,
+                              'prob': 0.6
+                          }, {
+                              'type': 'Contrast',
+                              'magnitude': 0.8,
+                              'prob': 1.0
+                          }],
+                          [{
+                              'type': 'Rotate',
+                              'angle': 26.666666666666668,
+                              'prob': 0.8
+                          }, {
+                              'type': 'ColorTransform',
+                              'magnitude': 0.2,
+                              'prob': 1.0
+                          }],
+                          [{
+                              'type': 'ColorTransform',
+                              'magnitude': 0.8,
+                              'prob': 0.8
+                          }, {
+                              'type': 'Solarize',
+                              'thr': 56.888888888888886,
+                              'prob': 0.8
+                          }],
+                          [{
+                              'type': 'Sharpness',
+                              'magnitude': 0.7,
+                              'prob': 0.4
+                          }, {
+                              'type': 'Invert',
+                              'prob': 0.6
+                          }],
+                          [{
+                              'type': 'Shear',
+                              'magnitude': 0.16666666666666666,
+                              'prob': 0.6,
+                              'direction': 'horizontal'
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 1.0
+                          }],
+                          [{
+                              'type': 'ColorTransform',
+                              'magnitude': 0.0,
+                              'prob': 0.4
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 0.6
+                          }],
+                          [{
+                              'type': 'Equalize',
+                              'prob': 0.4
+                          }, {
+                              'type': 'Solarize',
+                              'thr': 142.22222222222223,
+                              'prob': 0.2
+                          }],
+                          [{
+                              'type': 'Solarize',
+                              'thr': 113.77777777777777,
+                              'prob': 0.6
+                          }, {
+                              'type': 'AutoContrast',
+                              'prob': 0.6
+                          }],
+                          [{
+                              'type': 'Invert',
+                              'prob': 0.6
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 1.0
+                          }],
+                          [{
+                              'type': 'ColorTransform',
+                              'magnitude': 0.4,
+                              'prob': 0.6
+                          }, {
+                              'type': 'Contrast',
+                              'magnitude': 0.8,
+                              'prob': 1.0
+                          }],
+                          [{
+                              'type': 'Equalize',
+                              'prob': 0.8
+                          }, {
+                              'type': 'Equalize',
+                              'prob': 0.6
+                          }]]),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='ImageToTensor', keys=['img']),
+            dict(type='ToTensor', keys=['gt_label']),
+            dict(type='Collect', keys=['img', 'gt_label'])
+        ],
+        ann_file='data/dataset-flowers/train.txt',
+        classes='data/dataset-flowers/classes.txt'),
+    val=dict(
+        type='ImageNet',
+        data_prefix='data/',
+        ann_file='data/dataset-flowers/val.txt',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='Resize', size=(256, -1)),
+            dict(type='CenterCrop', crop_size=224),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='ImageToTensor', keys=['img']),
+            dict(type='Collect', keys=['img'])
+        ],
+        classes='data/dataset-flowers/classes.txt'),
+    test=dict(
+        type='ImageNet',
+        data_prefix='data/',
+        ann_file='data/dataset-flowers/val.txt',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='Resize', size=(256, -1)),
+            dict(type='CenterCrop', crop_size=224),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='ImageToTensor', keys=['img']),
+            dict(type='Collect', keys=['img'])
+        ],
+        classes='data/dataset-flowers/classes.txt'))
+evaluation = dict(
+    interval=1, metric='accuracy', metric_options=dict(topk=(1, )))
+optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
+optimizer_config = dict(grad_clip=None)
+lr_config = dict(policy='step', step=[30, 60, 90])
+runner = dict(type='EpochBasedRunner', max_epochs=100)
+checkpoint_config = dict(interval=10, max_keep_ckpts=3)
+log_config = dict(interval=100, hooks=[dict(type='TextLoggerHook')])
+dist_params = dict(backend='nccl')
+log_level = 'INFO'
+load_from = 'checkpoints/resnet18_8xb32_in1k_20210831-fbbb1da6.pth'
+resume_from = None
+workflow = [('train', 1)]
+work_dir = 'work_dirs/resnet/resnet18/resnet18_1xb256_flower_fineturn'
+gpu_ids = [0]
+
+2023-02-05 23:22:36,329 - mmcls - INFO - Set random seed to 1819385221, deterministic: False
+2023-02-05 23:22:36,408 - mmcls - INFO - initialize ResNet with init_cfg [{'type': 'Kaiming', 'layer': ['Conv2d']}, {'type': 'Constant', 'val': 1, 'layer': ['_BatchNorm', 'GroupNorm']}]
+2023-02-05 23:22:36,499 - mmcls - INFO - initialize LinearClsHead with init_cfg {'type': 'Normal', 'layer': 'Linear', 'std': 0.01}
+Name of parameter - Initialization information
+
+backbone.conv1.weight - torch.Size([64, 3, 7, 7]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.bn1.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.bn1.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer1.0.conv1.weight - torch.Size([64, 64, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer1.0.bn1.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer1.0.bn1.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer1.0.conv2.weight - torch.Size([64, 64, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer1.0.bn2.weight - torch.Size([64]): 
+Initialized by user-defined `init_weights` in ResNet  
+
+backbone.layer1.0.bn2.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer1.1.conv1.weight - torch.Size([64, 64, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer1.1.bn1.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer1.1.bn1.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer1.1.conv2.weight - torch.Size([64, 64, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer1.1.bn2.weight - torch.Size([64]): 
+Initialized by user-defined `init_weights` in ResNet  
+
+backbone.layer1.1.bn2.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer2.0.conv1.weight - torch.Size([128, 64, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer2.0.bn1.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer2.0.bn1.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer2.0.conv2.weight - torch.Size([128, 128, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer2.0.bn2.weight - torch.Size([128]): 
+Initialized by user-defined `init_weights` in ResNet  
+
+backbone.layer2.0.bn2.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer2.0.downsample.0.weight - torch.Size([128, 64, 1, 1]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer2.0.downsample.1.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer2.0.downsample.1.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer2.1.conv1.weight - torch.Size([128, 128, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer2.1.bn1.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer2.1.bn1.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer2.1.conv2.weight - torch.Size([128, 128, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer2.1.bn2.weight - torch.Size([128]): 
+Initialized by user-defined `init_weights` in ResNet  
+
+backbone.layer2.1.bn2.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer3.0.conv1.weight - torch.Size([256, 128, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer3.0.bn1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer3.0.bn1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer3.0.conv2.weight - torch.Size([256, 256, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer3.0.bn2.weight - torch.Size([256]): 
+Initialized by user-defined `init_weights` in ResNet  
+
+backbone.layer3.0.bn2.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer3.0.downsample.0.weight - torch.Size([256, 128, 1, 1]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer3.0.downsample.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer3.0.downsample.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer3.1.conv1.weight - torch.Size([256, 256, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer3.1.bn1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer3.1.bn1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer3.1.conv2.weight - torch.Size([256, 256, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer3.1.bn2.weight - torch.Size([256]): 
+Initialized by user-defined `init_weights` in ResNet  
+
+backbone.layer3.1.bn2.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer4.0.conv1.weight - torch.Size([512, 256, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer4.0.bn1.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer4.0.bn1.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer4.0.conv2.weight - torch.Size([512, 512, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer4.0.bn2.weight - torch.Size([512]): 
+Initialized by user-defined `init_weights` in ResNet  
+
+backbone.layer4.0.bn2.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer4.0.downsample.0.weight - torch.Size([512, 256, 1, 1]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer4.0.downsample.1.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer4.0.downsample.1.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer4.1.conv1.weight - torch.Size([512, 512, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer4.1.bn1.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer4.1.bn1.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+backbone.layer4.1.conv2.weight - torch.Size([512, 512, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.layer4.1.bn2.weight - torch.Size([512]): 
+Initialized by user-defined `init_weights` in ResNet  
+
+backbone.layer4.1.bn2.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of ImageClassifier  
+
+head.fc.weight - torch.Size([5, 512]): 
+NormalInit: mean=0, std=0.01, bias=0 
+
+head.fc.bias - torch.Size([5]): 
+NormalInit: mean=0, std=0.01, bias=0 
+2023-02-05 23:22:42,985 - mmcls - INFO - load checkpoint from local path: checkpoints/resnet18_8xb32_in1k_20210831-fbbb1da6.pth
+2023-02-05 23:22:43,068 - mmcls - WARNING - The model and loaded state dict do not match exactly
+
+size mismatch for head.fc.weight: copying a param with shape torch.Size([1000, 512]) from checkpoint, the shape in current model is torch.Size([5, 512]).
+size mismatch for head.fc.bias: copying a param with shape torch.Size([1000]) from checkpoint, the shape in current model is torch.Size([5]).
+2023-02-05 23:22:43,069 - mmcls - INFO - Start running, host: scz0a21@g0014, work_dir: /data/run01/scz0a21/MMLab-learn/mmclassification/work_dirs/resnet/resnet18/resnet18_1xb256_flower_fineturn
+2023-02-05 23:22:43,069 - mmcls - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(NORMAL      ) CheckpointHook                     
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(LOW         ) IterTimerHook                      
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(LOW         ) IterTimerHook                      
+(LOW         ) EvalHook                           
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(LOW         ) IterTimerHook                      
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_epoch:
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+2023-02-05 23:22:43,069 - mmcls - INFO - workflow: [('train', 1)], max: 100 epochs
+2023-02-05 23:22:43,069 - mmcls - INFO - Checkpoints will be saved to /data/run01/scz0a21/MMLab-learn/mmclassification/work_dirs/resnet/resnet18/resnet18_1xb256_flower_fineturn by HardDiskBackend.
+2023-02-05 23:22:50,847 - mmcls - INFO - Epoch(val) [1][3]	accuracy_top-1: 22.0280
+2023-02-05 23:22:57,157 - mmcls - INFO - Epoch(val) [2][3]	accuracy_top-1: 18.8811
+2023-02-05 23:23:03,362 - mmcls - INFO - Epoch(val) [3][3]	accuracy_top-1: 18.8811
+2023-02-05 23:23:09,735 - mmcls - INFO - Epoch(val) [4][3]	accuracy_top-1: 17.3077
+2023-02-05 23:23:16,064 - mmcls - INFO - Epoch(val) [5][3]	accuracy_top-1: 31.6434
+2023-02-05 23:23:22,406 - mmcls - INFO - Epoch(val) [6][3]	accuracy_top-1: 18.8811
+2023-02-05 23:23:28,753 - mmcls - INFO - Epoch(val) [7][3]	accuracy_top-1: 16.7832
+2023-02-05 23:23:35,062 - mmcls - INFO - Epoch(val) [8][3]	accuracy_top-1: 30.7692
+2023-02-05 23:23:41,342 - mmcls - INFO - Epoch(val) [9][3]	accuracy_top-1: 20.6294
+2023-02-05 23:23:46,710 - mmcls - INFO - Saving checkpoint at 10 epochs
+2023-02-05 23:23:47,843 - mmcls - INFO - Epoch(val) [10][3]	accuracy_top-1: 25.8741
+2023-02-05 23:23:54,164 - mmcls - INFO - Epoch(val) [11][3]	accuracy_top-1: 31.9930
+2023-02-05 23:24:00,565 - mmcls - INFO - Epoch(val) [12][3]	accuracy_top-1: 37.5874
+2023-02-05 23:24:06,822 - mmcls - INFO - Epoch(val) [13][3]	accuracy_top-1: 36.7133
+2023-02-05 23:24:13,138 - mmcls - INFO - Epoch(val) [14][3]	accuracy_top-1: 40.9091
+2023-02-05 23:24:19,418 - mmcls - INFO - Epoch(val) [15][3]	accuracy_top-1: 34.2657
+2023-02-05 23:24:25,780 - mmcls - INFO - Epoch(val) [16][3]	accuracy_top-1: 32.8671
+2023-02-05 23:24:32,073 - mmcls - INFO - Epoch(val) [17][3]	accuracy_top-1: 36.1888
+2023-02-05 23:24:38,375 - mmcls - INFO - Epoch(val) [18][3]	accuracy_top-1: 32.5175
+2023-02-05 23:24:44,744 - mmcls - INFO - Epoch(val) [19][3]	accuracy_top-1: 43.3566
+2023-02-05 23:24:50,219 - mmcls - INFO - Saving checkpoint at 20 epochs
+2023-02-05 23:24:51,350 - mmcls - INFO - Epoch(val) [20][3]	accuracy_top-1: 50.1748
+2023-02-05 23:24:57,678 - mmcls - INFO - Epoch(val) [21][3]	accuracy_top-1: 51.9231
+2023-02-05 23:25:04,020 - mmcls - INFO - Epoch(val) [22][3]	accuracy_top-1: 48.6014
+2023-02-05 23:25:10,273 - mmcls - INFO - Epoch(val) [23][3]	accuracy_top-1: 49.3007
+2023-02-05 23:25:16,658 - mmcls - INFO - Epoch(val) [24][3]	accuracy_top-1: 50.0000
+2023-02-05 23:25:22,952 - mmcls - INFO - Epoch(val) [25][3]	accuracy_top-1: 55.4196
+2023-02-05 23:25:29,311 - mmcls - INFO - Epoch(val) [26][3]	accuracy_top-1: 52.6224
+2023-02-05 23:25:35,628 - mmcls - INFO - Epoch(val) [27][3]	accuracy_top-1: 46.6783
+2023-02-05 23:25:42,056 - mmcls - INFO - Epoch(val) [28][3]	accuracy_top-1: 56.1189
+2023-02-05 23:25:48,375 - mmcls - INFO - Epoch(val) [29][3]	accuracy_top-1: 57.6923
+2023-02-05 23:25:53,793 - mmcls - INFO - Saving checkpoint at 30 epochs
+2023-02-05 23:25:54,921 - mmcls - INFO - Epoch(val) [30][3]	accuracy_top-1: 53.6713
+2023-02-05 23:26:01,281 - mmcls - INFO - Epoch(val) [31][3]	accuracy_top-1: 60.1399
+2023-02-05 23:26:07,605 - mmcls - INFO - Epoch(val) [32][3]	accuracy_top-1: 62.2378
+2023-02-05 23:26:13,901 - mmcls - INFO - Epoch(val) [33][3]	accuracy_top-1: 63.1119
+2023-02-05 23:26:20,216 - mmcls - INFO - Epoch(val) [34][3]	accuracy_top-1: 60.8392
+2023-02-05 23:26:26,523 - mmcls - INFO - Epoch(val) [35][3]	accuracy_top-1: 62.7622
+2023-02-05 23:26:32,816 - mmcls - INFO - Epoch(val) [36][3]	accuracy_top-1: 61.0140
+2023-02-05 23:26:39,093 - mmcls - INFO - Epoch(val) [37][3]	accuracy_top-1: 62.9371
+2023-02-05 23:26:45,461 - mmcls - INFO - Epoch(val) [38][3]	accuracy_top-1: 61.8881
+2023-02-05 23:26:51,603 - mmcls - INFO - Epoch(val) [39][3]	accuracy_top-1: 62.5874
+2023-02-05 23:26:57,036 - mmcls - INFO - Saving checkpoint at 40 epochs
+2023-02-05 23:26:58,180 - mmcls - INFO - Epoch(val) [40][3]	accuracy_top-1: 61.7133
+2023-02-05 23:27:04,488 - mmcls - INFO - Epoch(val) [41][3]	accuracy_top-1: 62.4126
+2023-02-05 23:27:10,831 - mmcls - INFO - Epoch(val) [42][3]	accuracy_top-1: 63.6364
+2023-02-05 23:27:17,136 - mmcls - INFO - Epoch(val) [43][3]	accuracy_top-1: 61.5385
+2023-02-05 23:27:23,477 - mmcls - INFO - Epoch(val) [44][3]	accuracy_top-1: 64.3357
+2023-02-05 23:27:29,834 - mmcls - INFO - Epoch(val) [45][3]	accuracy_top-1: 62.4126
+2023-02-05 23:27:36,157 - mmcls - INFO - Epoch(val) [46][3]	accuracy_top-1: 63.2867
+2023-02-05 23:27:42,442 - mmcls - INFO - Epoch(val) [47][3]	accuracy_top-1: 62.4126
+2023-02-05 23:27:48,801 - mmcls - INFO - Epoch(val) [48][3]	accuracy_top-1: 62.5874
+2023-02-05 23:27:55,133 - mmcls - INFO - Epoch(val) [49][3]	accuracy_top-1: 63.9860
+2023-02-05 23:28:00,498 - mmcls - INFO - Saving checkpoint at 50 epochs
+2023-02-05 23:28:01,628 - mmcls - INFO - Epoch(val) [50][3]	accuracy_top-1: 62.5874
+2023-02-05 23:28:07,922 - mmcls - INFO - Epoch(val) [51][3]	accuracy_top-1: 62.4126
+2023-02-05 23:28:14,214 - mmcls - INFO - Epoch(val) [52][3]	accuracy_top-1: 63.6364
+2023-02-05 23:28:20,562 - mmcls - INFO - Epoch(val) [53][3]	accuracy_top-1: 62.2378
+2023-02-05 23:28:26,892 - mmcls - INFO - Epoch(val) [54][3]	accuracy_top-1: 60.6643
+2023-02-05 23:28:33,101 - mmcls - INFO - Epoch(val) [55][3]	accuracy_top-1: 61.8881
+2023-02-05 23:28:39,450 - mmcls - INFO - Epoch(val) [56][3]	accuracy_top-1: 63.2867
+2023-02-05 23:28:45,725 - mmcls - INFO - Epoch(val) [57][3]	accuracy_top-1: 62.4126
+2023-02-05 23:28:52,042 - mmcls - INFO - Epoch(val) [58][3]	accuracy_top-1: 62.7622
+2023-02-05 23:28:58,307 - mmcls - INFO - Epoch(val) [59][3]	accuracy_top-1: 62.7622
+2023-02-05 23:29:03,624 - mmcls - INFO - Saving checkpoint at 60 epochs
+2023-02-05 23:29:04,793 - mmcls - INFO - Epoch(val) [60][3]	accuracy_top-1: 64.3357
+2023-02-05 23:29:11,117 - mmcls - INFO - Epoch(val) [61][3]	accuracy_top-1: 65.3846
+2023-02-05 23:29:17,365 - mmcls - INFO - Epoch(val) [62][3]	accuracy_top-1: 65.5594
+2023-02-05 23:29:23,572 - mmcls - INFO - Epoch(val) [63][3]	accuracy_top-1: 64.5105
+2023-02-05 23:29:29,868 - mmcls - INFO - Epoch(val) [64][3]	accuracy_top-1: 65.2098
+2023-02-05 23:29:36,105 - mmcls - INFO - Epoch(val) [65][3]	accuracy_top-1: 64.6853
+2023-02-05 23:29:42,404 - mmcls - INFO - Epoch(val) [66][3]	accuracy_top-1: 65.2098
+2023-02-05 23:29:48,698 - mmcls - INFO - Epoch(val) [67][3]	accuracy_top-1: 64.8601
+2023-02-05 23:29:55,011 - mmcls - INFO - Epoch(val) [68][3]	accuracy_top-1: 65.0350
+2023-02-05 23:30:01,317 - mmcls - INFO - Epoch(val) [69][3]	accuracy_top-1: 64.8601
+2023-02-05 23:30:06,802 - mmcls - INFO - Saving checkpoint at 70 epochs
+2023-02-05 23:30:08,006 - mmcls - INFO - Epoch(val) [70][3]	accuracy_top-1: 65.0350
+2023-02-05 23:30:14,237 - mmcls - INFO - Epoch(val) [71][3]	accuracy_top-1: 65.5594
+2023-02-05 23:30:20,591 - mmcls - INFO - Epoch(val) [72][3]	accuracy_top-1: 65.7343
+2023-02-05 23:30:26,841 - mmcls - INFO - Epoch(val) [73][3]	accuracy_top-1: 65.2098
+2023-02-05 23:30:33,150 - mmcls - INFO - Epoch(val) [74][3]	accuracy_top-1: 65.0350
+2023-02-05 23:30:39,414 - mmcls - INFO - Epoch(val) [75][3]	accuracy_top-1: 65.2098
+2023-02-05 23:30:45,673 - mmcls - INFO - Epoch(val) [76][3]	accuracy_top-1: 65.2098
+2023-02-05 23:30:52,012 - mmcls - INFO - Epoch(val) [77][3]	accuracy_top-1: 64.3357
+2023-02-05 23:30:58,272 - mmcls - INFO - Epoch(val) [78][3]	accuracy_top-1: 65.0350
+2023-02-05 23:31:04,557 - mmcls - INFO - Epoch(val) [79][3]	accuracy_top-1: 65.0350
+2023-02-05 23:31:09,963 - mmcls - INFO - Saving checkpoint at 80 epochs
+2023-02-05 23:31:11,107 - mmcls - INFO - Epoch(val) [80][3]	accuracy_top-1: 65.5594
+2023-02-05 23:31:17,395 - mmcls - INFO - Epoch(val) [81][3]	accuracy_top-1: 65.2098
+2023-02-05 23:31:23,709 - mmcls - INFO - Epoch(val) [82][3]	accuracy_top-1: 65.0350
+2023-02-05 23:31:30,073 - mmcls - INFO - Epoch(val) [83][3]	accuracy_top-1: 65.3846
+2023-02-05 23:31:36,360 - mmcls - INFO - Epoch(val) [84][3]	accuracy_top-1: 64.6853
+2023-02-05 23:31:42,660 - mmcls - INFO - Epoch(val) [85][3]	accuracy_top-1: 64.1608
+2023-02-05 23:31:48,994 - mmcls - INFO - Epoch(val) [86][3]	accuracy_top-1: 64.6853
+2023-02-05 23:31:55,333 - mmcls - INFO - Epoch(val) [87][3]	accuracy_top-1: 64.6853
+2023-02-05 23:32:01,654 - mmcls - INFO - Epoch(val) [88][3]	accuracy_top-1: 65.5594
+2023-02-05 23:32:07,964 - mmcls - INFO - Epoch(val) [89][3]	accuracy_top-1: 64.5105
+2023-02-05 23:32:13,416 - mmcls - INFO - Saving checkpoint at 90 epochs
+2023-02-05 23:32:14,572 - mmcls - INFO - Epoch(val) [90][3]	accuracy_top-1: 64.6853
+2023-02-05 23:32:20,856 - mmcls - INFO - Epoch(val) [91][3]	accuracy_top-1: 65.3846
+2023-02-05 23:32:27,223 - mmcls - INFO - Epoch(val) [92][3]	accuracy_top-1: 65.0350
+2023-02-05 23:32:33,472 - mmcls - INFO - Epoch(val) [93][3]	accuracy_top-1: 64.8601
+2023-02-05 23:32:39,844 - mmcls - INFO - Epoch(val) [94][3]	accuracy_top-1: 65.0350
+2023-02-05 23:32:46,171 - mmcls - INFO - Epoch(val) [95][3]	accuracy_top-1: 64.6853
+2023-02-05 23:32:52,456 - mmcls - INFO - Epoch(val) [96][3]	accuracy_top-1: 65.2098
+2023-02-05 23:32:58,800 - mmcls - INFO - Epoch(val) [97][3]	accuracy_top-1: 65.5594
+2023-02-05 23:33:05,121 - mmcls - INFO - Epoch(val) [98][3]	accuracy_top-1: 65.3846
+2023-02-05 23:33:11,409 - mmcls - INFO - Epoch(val) [99][3]	accuracy_top-1: 64.6853
+2023-02-05 23:33:16,812 - mmcls - INFO - Saving checkpoint at 100 epochs
+2023-02-05 23:33:17,962 - mmcls - INFO - Epoch(val) [100][3]	accuracy_top-1: 64.8601
