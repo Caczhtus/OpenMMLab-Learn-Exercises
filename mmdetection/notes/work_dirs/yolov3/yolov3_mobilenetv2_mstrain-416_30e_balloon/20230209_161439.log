@@ -1,0 +1,1061 @@
+2023-02-09 16:14:39,851 - mmdet - INFO - Environment info:
+------------------------------------------------------------
+sys.platform: linux
+Python: 3.8.13 (default, Mar 28 2022, 11:38:47) [GCC 7.5.0]
+CUDA available: True
+GPU 0: NVIDIA GeForce RTX 3090
+CUDA_HOME: /usr/local/cuda
+NVCC: Cuda compilation tools, release 11.3, V11.3.109
+GCC: gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+PyTorch: 1.10.2+cu113
+PyTorch compiling details: PyTorch built with:
+  - GCC 7.3
+  - C++ Version: 201402
+  - Intel(R) Math Kernel Library Version 2020.0.0 Product Build 20191122 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.2.3 (Git Hash 7336ca9f055cf1bfa13efb658fe15dc9b41f0740)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.3
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86
+  - CuDNN 8.2
+  - Magma 2.5.2
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.3, CUDNN_VERSION=8.2.0, CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/c++, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -fopenmp -DNDEBUG -DUSE_KINETO -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -DEDGE_PROFILER_USE_KINETO -O2 -fPIC -Wno-narrowing -Wall -Wextra -Werror=return-type -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-unused-local-typedefs -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=1.10.2, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, 
+
+TorchVision: 0.11.3+cu113
+OpenCV: 4.5.3
+MMCV: 1.5.3
+MMCV Compiler: GCC 7.3
+MMCV CUDA Compiler: 11.3
+MMDetection: 2.28.1+
+------------------------------------------------------------
+
+2023-02-09 16:14:40,464 - mmdet - INFO - Distributed training: False
+2023-02-09 16:14:41,072 - mmdet - INFO - Config:
+checkpoint_config = dict(interval=2, max_keep_ckpts=2)
+log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
+custom_hooks = [dict(type='NumClassCheckHook')]
+dist_params = dict(backend='nccl')
+log_level = 'INFO'
+load_from = 'yolov3_mobilenetv2_mstrain-416_300e_coco_20210718_010823-f68a07b3.pth'
+resume_from = None
+workflow = [('train', 1)]
+opencv_num_threads = 0
+mp_start_method = 'fork'
+auto_scale_lr = dict(enable=False, base_batch_size=192)
+model = dict(
+    type='YOLOV3',
+    backbone=dict(
+        type='MobileNetV2',
+        out_indices=(2, 4, 6),
+        act_cfg=dict(type='LeakyReLU', negative_slope=0.1),
+        init_cfg=dict(
+            type='Pretrained', checkpoint='open-mmlab://mmdet/mobilenet_v2')),
+    neck=dict(
+        type='YOLOV3Neck',
+        num_scales=3,
+        in_channels=[320, 96, 32],
+        out_channels=[96, 96, 96]),
+    bbox_head=dict(
+        type='YOLOV3Head',
+        num_classes=1,
+        in_channels=[96, 96, 96],
+        out_channels=[96, 96, 96],
+        anchor_generator=dict(
+            type='YOLOAnchorGenerator',
+            base_sizes=[[(116, 90), (156, 198), (373, 326)],
+                        [(30, 61), (62, 45), (59, 119)],
+                        [(10, 13), (16, 30), (33, 23)]],
+            strides=[32, 16, 8]),
+        bbox_coder=dict(type='YOLOBBoxCoder'),
+        featmap_strides=[32, 16, 8],
+        loss_cls=dict(
+            type='CrossEntropyLoss',
+            use_sigmoid=True,
+            loss_weight=1.0,
+            reduction='sum'),
+        loss_conf=dict(
+            type='CrossEntropyLoss',
+            use_sigmoid=True,
+            loss_weight=1.0,
+            reduction='sum'),
+        loss_xy=dict(
+            type='CrossEntropyLoss',
+            use_sigmoid=True,
+            loss_weight=2.0,
+            reduction='sum'),
+        loss_wh=dict(type='MSELoss', loss_weight=2.0, reduction='sum')),
+    train_cfg=dict(
+        assigner=dict(
+            type='GridAssigner',
+            pos_iou_thr=0.5,
+            neg_iou_thr=0.5,
+            min_pos_iou=0)),
+    test_cfg=dict(
+        nms_pre=1000,
+        min_bbox_size=0,
+        score_thr=0.05,
+        conf_thr=0.005,
+        nms=dict(type='nms', iou_threshold=0.45),
+        max_per_img=100))
+dataset_type = 'CocoDataset'
+data_root = 'data/coco/'
+img_norm_cfg = dict(
+    mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations', with_bbox=True),
+    dict(
+        type='Expand',
+        mean=[123.675, 116.28, 103.53],
+        to_rgb=True,
+        ratio_range=(1, 2)),
+    dict(
+        type='MinIoURandomCrop',
+        min_ious=(0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
+        min_crop_size=0.3),
+    dict(
+        type='Resize',
+        img_scale=[(320, 320), (416, 416)],
+        multiscale_mode='range',
+        keep_ratio=True),
+    dict(type='RandomFlip', flip_ratio=0.5),
+    dict(type='PhotoMetricDistortion'),
+    dict(
+        type='Normalize',
+        mean=[123.675, 116.28, 103.53],
+        std=[58.395, 57.12, 57.375],
+        to_rgb=True),
+    dict(type='Pad', size_divisor=32),
+    dict(type='DefaultFormatBundle'),
+    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+]
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(
+        type='MultiScaleFlipAug',
+        img_scale=(416, 416),
+        flip=False,
+        transforms=[
+            dict(type='Resize', keep_ratio=True),
+            dict(type='RandomFlip'),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='Pad', size_divisor=32),
+            dict(type='DefaultFormatBundle'),
+            dict(type='Collect', keys=['img'])
+        ])
+]
+data = dict(
+    samples_per_gpu=8,
+    workers_per_gpu=4,
+    train=dict(
+        type='RepeatDataset',
+        times=10,
+        dataset=dict(
+            type='CocoDataset',
+            ann_file=
+            '/openbayes/input/output0/balloon/train_via_region_data.json',
+            img_prefix='/openbayes/input/input0/balloon/train/',
+            pipeline=[
+                dict(type='LoadImageFromFile'),
+                dict(type='LoadAnnotations', with_bbox=True),
+                dict(
+                    type='Expand',
+                    mean=[123.675, 116.28, 103.53],
+                    to_rgb=True,
+                    ratio_range=(1, 2)),
+                dict(
+                    type='MinIoURandomCrop',
+                    min_ious=(0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
+                    min_crop_size=0.3),
+                dict(
+                    type='Resize',
+                    img_scale=[(320, 320), (416, 416)],
+                    multiscale_mode='range',
+                    keep_ratio=True),
+                dict(type='RandomFlip', flip_ratio=0.5),
+                dict(type='PhotoMetricDistortion'),
+                dict(
+                    type='Normalize',
+                    mean=[123.675, 116.28, 103.53],
+                    std=[58.395, 57.12, 57.375],
+                    to_rgb=True),
+                dict(type='Pad', size_divisor=32),
+                dict(type='DefaultFormatBundle'),
+                dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+            ],
+            classes=('balloon', ))),
+    val=dict(
+        type='CocoDataset',
+        ann_file='/openbayes/input/output0/balloon/val_via_region_data.json',
+        img_prefix='/openbayes/input/input0/balloon/val/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug',
+                img_scale=(416, 416),
+                flip=False,
+                transforms=[
+                    dict(type='Resize', keep_ratio=True),
+                    dict(type='RandomFlip'),
+                    dict(
+                        type='Normalize',
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
+                        to_rgb=True),
+                    dict(type='Pad', size_divisor=32),
+                    dict(type='DefaultFormatBundle'),
+                    dict(type='Collect', keys=['img'])
+                ])
+        ],
+        classes=('balloon', )),
+    test=dict(
+        type='CocoDataset',
+        ann_file='/openbayes/input/output0/balloon/val_via_region_data.json',
+        img_prefix='/openbayes/input/input0/balloon/val/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug',
+                img_scale=(416, 416),
+                flip=False,
+                transforms=[
+                    dict(type='Resize', keep_ratio=True),
+                    dict(type='RandomFlip'),
+                    dict(
+                        type='Normalize',
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
+                        to_rgb=True),
+                    dict(type='Pad', size_divisor=32),
+                    dict(type='DefaultFormatBundle'),
+                    dict(type='Collect', keys=['img'])
+                ])
+        ],
+        classes=('balloon', )))
+optimizer = dict(type='SGD', lr=0.003, momentum=0.9, weight_decay=0.0005)
+optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
+lr_config = dict(
+    policy='step',
+    warmup='linear',
+    warmup_iters=4000,
+    warmup_ratio=0.0001,
+    step=[24, 28])
+runner = dict(type='EpochBasedRunner', max_epochs=30)
+evaluation = dict(interval=1, metric=['bbox'])
+find_unused_parameters = True
+classes = ('balloon', )
+work_dir = 'work_dirs/yolov3/yolov3_mobilenetv2_mstrain-416_30e_balloon/'
+auto_resume = False
+gpu_ids = range(0, 1)
+
+2023-02-09 16:14:41,073 - mmdet - INFO - Set random seed to 815861825, deterministic: False
+2023-02-09 16:14:41,130 - mmdet - INFO - initialize MobileNetV2 with init_cfg {'type': 'Pretrained', 'checkpoint': 'open-mmlab://mmdet/mobilenet_v2'}
+Name of parameter - Initialization information
+
+backbone.conv1.conv.weight - torch.Size([32, 3, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.conv1.bn.weight - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.conv1.bn.bias - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer1.0.depthwise_conv.conv.weight - torch.Size([32, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer1.0.depthwise_conv.bn.weight - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer1.0.depthwise_conv.bn.bias - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer1.0.linear_conv.conv.weight - torch.Size([16, 32, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer1.0.linear_conv.bn.weight - torch.Size([16]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer1.0.linear_conv.bn.bias - torch.Size([16]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.0.expand_conv.conv.weight - torch.Size([96, 16, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.0.expand_conv.bn.weight - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.0.expand_conv.bn.bias - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.0.depthwise_conv.conv.weight - torch.Size([96, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.0.depthwise_conv.bn.weight - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.0.depthwise_conv.bn.bias - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.0.linear_conv.conv.weight - torch.Size([24, 96, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.0.linear_conv.bn.weight - torch.Size([24]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.0.linear_conv.bn.bias - torch.Size([24]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.1.expand_conv.conv.weight - torch.Size([144, 24, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.1.expand_conv.bn.weight - torch.Size([144]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.1.expand_conv.bn.bias - torch.Size([144]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.1.depthwise_conv.conv.weight - torch.Size([144, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.1.depthwise_conv.bn.weight - torch.Size([144]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.1.depthwise_conv.bn.bias - torch.Size([144]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.1.linear_conv.conv.weight - torch.Size([24, 144, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.1.linear_conv.bn.weight - torch.Size([24]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer2.1.linear_conv.bn.bias - torch.Size([24]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.0.expand_conv.conv.weight - torch.Size([144, 24, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.0.expand_conv.bn.weight - torch.Size([144]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.0.expand_conv.bn.bias - torch.Size([144]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.0.depthwise_conv.conv.weight - torch.Size([144, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.0.depthwise_conv.bn.weight - torch.Size([144]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.0.depthwise_conv.bn.bias - torch.Size([144]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.0.linear_conv.conv.weight - torch.Size([32, 144, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.0.linear_conv.bn.weight - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.0.linear_conv.bn.bias - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.1.expand_conv.conv.weight - torch.Size([192, 32, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.1.expand_conv.bn.weight - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.1.expand_conv.bn.bias - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.1.depthwise_conv.conv.weight - torch.Size([192, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.1.depthwise_conv.bn.weight - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.1.depthwise_conv.bn.bias - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.1.linear_conv.conv.weight - torch.Size([32, 192, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.1.linear_conv.bn.weight - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.1.linear_conv.bn.bias - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.2.expand_conv.conv.weight - torch.Size([192, 32, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.2.expand_conv.bn.weight - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.2.expand_conv.bn.bias - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.2.depthwise_conv.conv.weight - torch.Size([192, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.2.depthwise_conv.bn.weight - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.2.depthwise_conv.bn.bias - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.2.linear_conv.conv.weight - torch.Size([32, 192, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.2.linear_conv.bn.weight - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer3.2.linear_conv.bn.bias - torch.Size([32]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.0.expand_conv.conv.weight - torch.Size([192, 32, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.0.expand_conv.bn.weight - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.0.expand_conv.bn.bias - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.0.depthwise_conv.conv.weight - torch.Size([192, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.0.depthwise_conv.bn.weight - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.0.depthwise_conv.bn.bias - torch.Size([192]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.0.linear_conv.conv.weight - torch.Size([64, 192, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.0.linear_conv.bn.weight - torch.Size([64]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.0.linear_conv.bn.bias - torch.Size([64]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.1.expand_conv.conv.weight - torch.Size([384, 64, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.1.expand_conv.bn.weight - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.1.expand_conv.bn.bias - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.1.depthwise_conv.conv.weight - torch.Size([384, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.1.depthwise_conv.bn.weight - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.1.depthwise_conv.bn.bias - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.1.linear_conv.conv.weight - torch.Size([64, 384, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.1.linear_conv.bn.weight - torch.Size([64]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.1.linear_conv.bn.bias - torch.Size([64]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.2.expand_conv.conv.weight - torch.Size([384, 64, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.2.expand_conv.bn.weight - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.2.expand_conv.bn.bias - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.2.depthwise_conv.conv.weight - torch.Size([384, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.2.depthwise_conv.bn.weight - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.2.depthwise_conv.bn.bias - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.2.linear_conv.conv.weight - torch.Size([64, 384, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.2.linear_conv.bn.weight - torch.Size([64]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.2.linear_conv.bn.bias - torch.Size([64]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.3.expand_conv.conv.weight - torch.Size([384, 64, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.3.expand_conv.bn.weight - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.3.expand_conv.bn.bias - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.3.depthwise_conv.conv.weight - torch.Size([384, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.3.depthwise_conv.bn.weight - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.3.depthwise_conv.bn.bias - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.3.linear_conv.conv.weight - torch.Size([64, 384, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.3.linear_conv.bn.weight - torch.Size([64]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer4.3.linear_conv.bn.bias - torch.Size([64]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.0.expand_conv.conv.weight - torch.Size([384, 64, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.0.expand_conv.bn.weight - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.0.expand_conv.bn.bias - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.0.depthwise_conv.conv.weight - torch.Size([384, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.0.depthwise_conv.bn.weight - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.0.depthwise_conv.bn.bias - torch.Size([384]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.0.linear_conv.conv.weight - torch.Size([96, 384, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.0.linear_conv.bn.weight - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.0.linear_conv.bn.bias - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.1.expand_conv.conv.weight - torch.Size([576, 96, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.1.expand_conv.bn.weight - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.1.expand_conv.bn.bias - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.1.depthwise_conv.conv.weight - torch.Size([576, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.1.depthwise_conv.bn.weight - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.1.depthwise_conv.bn.bias - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.1.linear_conv.conv.weight - torch.Size([96, 576, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.1.linear_conv.bn.weight - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.1.linear_conv.bn.bias - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.2.expand_conv.conv.weight - torch.Size([576, 96, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.2.expand_conv.bn.weight - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.2.expand_conv.bn.bias - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.2.depthwise_conv.conv.weight - torch.Size([576, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.2.depthwise_conv.bn.weight - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.2.depthwise_conv.bn.bias - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.2.linear_conv.conv.weight - torch.Size([96, 576, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.2.linear_conv.bn.weight - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer5.2.linear_conv.bn.bias - torch.Size([96]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.0.expand_conv.conv.weight - torch.Size([576, 96, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.0.expand_conv.bn.weight - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.0.expand_conv.bn.bias - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.0.depthwise_conv.conv.weight - torch.Size([576, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.0.depthwise_conv.bn.weight - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.0.depthwise_conv.bn.bias - torch.Size([576]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.0.linear_conv.conv.weight - torch.Size([160, 576, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.0.linear_conv.bn.weight - torch.Size([160]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.0.linear_conv.bn.bias - torch.Size([160]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.1.expand_conv.conv.weight - torch.Size([960, 160, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.1.expand_conv.bn.weight - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.1.expand_conv.bn.bias - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.1.depthwise_conv.conv.weight - torch.Size([960, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.1.depthwise_conv.bn.weight - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.1.depthwise_conv.bn.bias - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.1.linear_conv.conv.weight - torch.Size([160, 960, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.1.linear_conv.bn.weight - torch.Size([160]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.1.linear_conv.bn.bias - torch.Size([160]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.2.expand_conv.conv.weight - torch.Size([960, 160, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.2.expand_conv.bn.weight - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.2.expand_conv.bn.bias - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.2.depthwise_conv.conv.weight - torch.Size([960, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.2.depthwise_conv.bn.weight - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.2.depthwise_conv.bn.bias - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.2.linear_conv.conv.weight - torch.Size([160, 960, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.2.linear_conv.bn.weight - torch.Size([160]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer6.2.linear_conv.bn.bias - torch.Size([160]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer7.0.expand_conv.conv.weight - torch.Size([960, 160, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer7.0.expand_conv.bn.weight - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer7.0.expand_conv.bn.bias - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer7.0.depthwise_conv.conv.weight - torch.Size([960, 1, 3, 3]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer7.0.depthwise_conv.bn.weight - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer7.0.depthwise_conv.bn.bias - torch.Size([960]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer7.0.linear_conv.conv.weight - torch.Size([320, 960, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer7.0.linear_conv.bn.weight - torch.Size([320]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.layer7.0.linear_conv.bn.bias - torch.Size([320]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.conv2.conv.weight - torch.Size([1280, 320, 1, 1]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.conv2.bn.weight - torch.Size([1280]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+backbone.conv2.bn.bias - torch.Size([1280]): 
+PretrainedInit: load from open-mmlab://mmdet/mobilenet_v2 
+
+neck.detect1.conv1.conv.weight - torch.Size([96, 320, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect1.conv1.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect1.conv1.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect1.conv2.conv.weight - torch.Size([192, 96, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect1.conv2.bn.weight - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect1.conv2.bn.bias - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect1.conv3.conv.weight - torch.Size([96, 192, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect1.conv3.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect1.conv3.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect1.conv4.conv.weight - torch.Size([192, 96, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect1.conv4.bn.weight - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect1.conv4.bn.bias - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect1.conv5.conv.weight - torch.Size([96, 192, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect1.conv5.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect1.conv5.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.conv1.conv.weight - torch.Size([96, 96, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.conv1.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.conv1.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv1.conv.weight - torch.Size([96, 192, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect2.conv1.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv1.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv2.conv.weight - torch.Size([192, 96, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect2.conv2.bn.weight - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv2.bn.bias - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv3.conv.weight - torch.Size([96, 192, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect2.conv3.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv3.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv4.conv.weight - torch.Size([192, 96, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect2.conv4.bn.weight - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv4.bn.bias - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv5.conv.weight - torch.Size([96, 192, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect2.conv5.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect2.conv5.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.conv2.conv.weight - torch.Size([96, 96, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.conv2.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.conv2.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv1.conv.weight - torch.Size([96, 128, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect3.conv1.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv1.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv2.conv.weight - torch.Size([192, 96, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect3.conv2.bn.weight - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv2.bn.bias - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv3.conv.weight - torch.Size([96, 192, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect3.conv3.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv3.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv4.conv.weight - torch.Size([192, 96, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect3.conv4.bn.weight - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv4.bn.bias - torch.Size([192]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv5.conv.weight - torch.Size([96, 192, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.detect3.conv5.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+neck.detect3.conv5.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+bbox_head.convs_bridge.0.conv.weight - torch.Size([96, 96, 3, 3]): 
+Initialized by user-defined `init_weights` in YOLOV3Head  
+
+bbox_head.convs_bridge.0.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+bbox_head.convs_bridge.0.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+bbox_head.convs_bridge.1.conv.weight - torch.Size([96, 96, 3, 3]): 
+Initialized by user-defined `init_weights` in YOLOV3Head  
+
+bbox_head.convs_bridge.1.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+bbox_head.convs_bridge.1.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+bbox_head.convs_bridge.2.conv.weight - torch.Size([96, 96, 3, 3]): 
+Initialized by user-defined `init_weights` in YOLOV3Head  
+
+bbox_head.convs_bridge.2.bn.weight - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+bbox_head.convs_bridge.2.bn.bias - torch.Size([96]): 
+The value is the same before and after calling `init_weights` of YOLOV3  
+
+bbox_head.convs_pred.0.weight - torch.Size([18, 96, 1, 1]): 
+Initialized by user-defined `init_weights` in YOLOV3Head  
+
+bbox_head.convs_pred.0.bias - torch.Size([18]): 
+Initialized by user-defined `init_weights` in YOLOV3Head  
+
+bbox_head.convs_pred.1.weight - torch.Size([18, 96, 1, 1]): 
+Initialized by user-defined `init_weights` in YOLOV3Head  
+
+bbox_head.convs_pred.1.bias - torch.Size([18]): 
+Initialized by user-defined `init_weights` in YOLOV3Head  
+
+bbox_head.convs_pred.2.weight - torch.Size([18, 96, 1, 1]): 
+Initialized by user-defined `init_weights` in YOLOV3Head  
+
+bbox_head.convs_pred.2.bias - torch.Size([18]): 
+Initialized by user-defined `init_weights` in YOLOV3Head  
+2023-02-09 16:14:44,221 - mmdet - INFO - Automatic scaling of learning rate (LR) has been disabled.
+2023-02-09 16:14:44,225 - mmdet - INFO - load checkpoint from local path: yolov3_mobilenetv2_mstrain-416_300e_coco_20210718_010823-f68a07b3.pth
+2023-02-09 16:14:44,254 - mmdet - WARNING - The model and loaded state dict do not match exactly
+
+size mismatch for bbox_head.convs_pred.0.weight: copying a param with shape torch.Size([255, 96, 1, 1]) from checkpoint, the shape in current model is torch.Size([18, 96, 1, 1]).
+size mismatch for bbox_head.convs_pred.0.bias: copying a param with shape torch.Size([255]) from checkpoint, the shape in current model is torch.Size([18]).
+size mismatch for bbox_head.convs_pred.1.weight: copying a param with shape torch.Size([255, 96, 1, 1]) from checkpoint, the shape in current model is torch.Size([18, 96, 1, 1]).
+size mismatch for bbox_head.convs_pred.1.bias: copying a param with shape torch.Size([255]) from checkpoint, the shape in current model is torch.Size([18]).
+size mismatch for bbox_head.convs_pred.2.weight: copying a param with shape torch.Size([255, 96, 1, 1]) from checkpoint, the shape in current model is torch.Size([18, 96, 1, 1]).
+size mismatch for bbox_head.convs_pred.2.bias: copying a param with shape torch.Size([255]) from checkpoint, the shape in current model is torch.Size([18]).
+2023-02-09 16:14:44,256 - mmdet - INFO - Start running, host: root@caczhtus-yu63tfzg6wgd-main, work_dir: /output/balloon-detection/work_dirs/yolov3/yolov3_mobilenetv2_mstrain-416_30e_balloon
+2023-02-09 16:14:44,256 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(NORMAL      ) CheckpointHook                     
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(NORMAL      ) NumClassCheckHook                  
+(LOW         ) IterTimerHook                      
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(LOW         ) IterTimerHook                      
+(LOW         ) EvalHook                           
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(LOW         ) IterTimerHook                      
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) NumClassCheckHook                  
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+2023-02-09 16:14:44,256 - mmdet - INFO - workflow: [('train', 1)], max: 30 epochs
+2023-02-09 16:14:44,256 - mmdet - INFO - Checkpoints will be saved to /output/balloon-detection/work_dirs/yolov3/yolov3_mobilenetv2_mstrain-416_30e_balloon by HardDiskBackend.
+2023-02-09 16:14:51,671 - mmdet - INFO - Epoch [1][50/77]	lr: 3.705e-05, eta: 0:05:35, time: 0.148, data_time: 0.074, memory: 1856, loss_cls: 182.0673, loss_conf: 438.7376, loss_xy: 112.5329, loss_wh: 15.5492, loss: 748.8871, grad_norm: 601.7423
+2023-02-09 16:14:54,949 - mmdet - INFO - Evaluating bbox...
+2023-02-09 16:14:54,957 - mmdet - INFO - 
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.023
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=1000 ] = 0.059
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=1000 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=1000 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=1000 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=1000 ] = 0.030
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.034
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=300 ] = 0.034
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=1000 ] = 0.034
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=1000 ] = 0.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=1000 ] = 0.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=1000 ] = 0.047
+
+2023-02-09 16:14:54,957 - mmdet - INFO - Exp name: yolov3_mobilenetv2_mstrain-416_30e_balloon.py
+2023-02-09 16:14:54,957 - mmdet - INFO - Epoch(val) [1][13]	bbox_mAP: 0.0229, bbox_mAP_50: 0.0594, bbox_mAP_75: 0.0000, bbox_mAP_s: 0.0000, bbox_mAP_m: 0.0000, bbox_mAP_l: 0.0302, bbox_mAP_copypaste: 0.0229 0.0594 0.0000 0.0000 0.0000 0.0302
+2023-02-09 16:15:02,787 - mmdet - INFO - Epoch [2][50/77]	lr: 9.479e-05, eta: 0:04:21, time: 0.157, data_time: 0.084, memory: 1856, loss_cls: 100.0848, loss_conf: 283.5801, loss_xy: 113.8088, loss_wh: 8.7935, loss: 506.2672, grad_norm: 462.3987
+2023-02-09 16:15:05,141 - mmdet - INFO - Saving checkpoint at 2 epochs
+2023-02-09 16:15:06,169 - mmdet - INFO - Evaluating bbox...
+2023-02-09 16:15:06,232 - mmdet - INFO - 
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.160
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=1000 ] = 0.489
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=1000 ] = 0.044
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=1000 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=1000 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=1000 ] = 0.218
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.292
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=300 ] = 0.292
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=1000 ] = 0.292
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=1000 ] = 0.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=1000 ] = 0.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=1000 ] = 0.406
+
+2023-02-09 16:15:06,232 - mmdet - INFO - Exp name: yolov3_mobilenetv2_mstrain-416_30e_balloon.py
+2023-02-09 16:15:06,233 - mmdet - INFO - Epoch(val) [2][13]	bbox_mAP: 0.1600, bbox_mAP_50: 0.4890, bbox_mAP_75: 0.0436, bbox_mAP_s: 0.0000, bbox_mAP_m: 0.0000, bbox_mAP_l: 0.2183, bbox_mAP_copypaste: 0.1600 0.4890 0.0436 0.0000 0.0000 0.2183
+2023-02-09 16:15:13,502 - mmdet - INFO - Epoch [3][50/77]	lr: 1.525e-04, eta: 0:03:52, time: 0.145, data_time: 0.075, memory: 1856, loss_cls: 15.6867, loss_conf: 159.8936, loss_xy: 109.9582, loss_wh: 6.5085, loss: 292.0470, grad_norm: 500.9217
+2023-02-09 16:15:16,588 - mmdet - INFO - Evaluating bbox...
+2023-02-09 16:15:16,623 - mmdet - INFO - 
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.279
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=1000 ] = 0.612
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=1000 ] = 0.105
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=1000 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=1000 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=1000 ] = 0.380
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.330
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=300 ] = 0.330
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=1000 ] = 0.330
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=1000 ] = 0.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=1000 ] = 0.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=1000 ] = 0.458
+
+2023-02-09 16:15:16,623 - mmdet - INFO - Exp name: yolov3_mobilenetv2_mstrain-416_30e_balloon.py
+2023-02-09 16:15:16,623 - mmdet - INFO - Epoch(val) [3][13]	bbox_mAP: 0.2788, bbox_mAP_50: 0.6119, bbox_mAP_75: 0.1051, bbox_mAP_s: 0.0000, bbox_mAP_m: 0.0000, bbox_mAP_l: 0.3796, bbox_mAP_copypaste: 0.2788 0.6119 0.1051 0.0000 0.0000 0.3796
+2023-02-09 16:15:24,165 - mmdet - INFO - Epoch [4][50/77]	lr: 2.103e-04, eta: 0:03:36, time: 0.151, data_time: 0.081, memory: 1856, loss_cls: 7.0237, loss_conf: 128.1930, loss_xy: 121.4705, loss_wh: 6.4608, loss: 263.1481, grad_norm: 498.4312
+2023-02-09 16:15:26,738 - mmdet - INFO - Saving checkpoint at 4 epochs
+2023-02-09 16:15:27,967 - mmdet - INFO - Evaluating bbox...
+2023-02-09 16:15:27,992 - mmdet - INFO - 
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.300
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=1000 ] = 0.656
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=1000 ] = 0.188
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=1000 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=1000 ] = 0.005
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=1000 ] = 0.407
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.362
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=300 ] = 0.362
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=1000 ] = 0.362
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=1000 ] = 0.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=1000 ] = 0.050
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=1000 ] = 0.486
+
+2023-02-09 16:15:27,992 - mmdet - INFO - Exp name: yolov3_mobilenetv2_mstrain-416_30e_balloon.py
+2023-02-09 16:15:27,992 - mmdet - INFO - Epoch(val) [4][13]	bbox_mAP: 0.3003, bbox_mAP_50: 0.6562, bbox_mAP_75: 0.1878, bbox_mAP_s: 0.0000, bbox_mAP_m: 0.0051, bbox_mAP_l: 0.4074, bbox_mAP_copypaste: 0.3003 0.6562 0.1878 0.0000 0.0051 0.4074
+2023-02-09 16:15:35,254 - mmdet - INFO - Epoch [5][50/77]	lr: 2.680e-04, eta: 0:03:23, time: 0.145, data_time: 0.074, memory: 1856, loss_cls: 3.5508, loss_conf: 85.7366, loss_xy: 94.4948, loss_wh: 4.8671, loss: 188.6493, grad_norm: 447.6453
